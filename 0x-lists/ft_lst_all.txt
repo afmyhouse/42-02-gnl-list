@@ -1,0 +1,190 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_lst_all.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/02/22 21:28:48 by antoda-s          #+#    #+#             */
+/*   Updated: 2023/02/25 14:44:06 by antoda-s         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "lists.h"
+
+/// @brief 		Adds the node ’new’ at the end of the list.
+/// @param lst 	The address of a pointer to the first link of a list.
+/// @param new 	The address of a pointer to the node to be added to the list. 
+void	ft_lstadd_back(t_gnl **lst, t_gnl *new)
+{
+	t_gnl	*lst_back;
+
+	if (*lst)
+	{
+		lst_back = ft_lstlast(*lst);
+		(*lst_back).next = &*new;
+	}
+	else
+		*lst = new;
+}
+
+/// @brief		Adds the element ’new’ at the beginning of the list.
+/// @param lst 	The address of a pointer to the first link of a list.
+/// @param new	The address of a pointer to the node to be added to the list.
+void	ft_lstadd_front(t_gnl **lst, t_gnl *new)
+{
+	if (lst && new)
+	{
+		(*new).next = *lst;
+		*lst = new;
+	}
+}
+
+/// @brief 		Deletes and frees the given element and every successor of that
+///				element, using the function ’del’ and free(3). 
+///				Finally, the pointer to the list must be set to NULL.
+/// @param lst 	The adress of a pointer to an element.
+/// @param del 	The address of the function used to delete the content of the element.
+void	ft_lstclear(t_gnl **lst, void (*del)(void *))
+{
+	t_gnl	*lstclear;
+	t_gnl	*lstnext;
+
+	if (!lst)
+		return ;
+	lstclear = *lst;
+	while (lstclear)
+	{
+		lstnext = (*lstclear).next;
+		ft_lstdelone(lstclear, del);
+		lstclear = lstnext;
+	}
+	*lst = NULL;
+}
+
+/// @brief 		Deletes the element given as the parameter.
+/// @param lst 	The element to be deleted.
+/// @param del 	The address of the function used to delete the content of the element.
+void	ft_lstdelone(t_gnl *lst, void (*del)(void*))
+{
+	if (!lst || !del)
+		return ;
+	del((*lst).content);
+	free(lst);
+}
+
+/// @brief 		Iterates the list ’lst’ and applies the function ’f’ to the 
+///				content of each element.
+/// @param lst 	The address of a pointer to an element.
+/// @param f 	The address of the function used to iterate on the list.
+void	ft_gnl_keep(t_gnl *lst, void (*f)(void *))
+{
+	while (lst)
+	{
+		f((*lst).content);
+		lst = (*lst).next;
+	}
+}
+
+/// @brief 		Returns the last element of the list.
+/// @param lst 	The beginning of the list.
+/// @return		The last element of the list.
+t_gnl	*ft_lstlast(t_gnl *lst)
+{
+	if (!lst)
+		return (NULL);
+	while (lst)
+	{
+		if ((*lst).next == NULL)
+			return (lst);
+		lst = (*lst).next;
+	}
+	return (lst);
+}
+
+/// @brief 		Iterates the list ’lst’ and applies the function ’f’ on the 
+///				content of each node. Creates a new list resulting of the 
+///				successive applications of the function ’f’. The ’del’ function 
+///				is used to delete the content of a node if needed.
+/// @param lst 	The address of a pointer to a node.
+/// @param f 	The address of the function used to iterate on the list.
+/// @param del 	The address of the function used to delete the content of a
+///				node if needed.
+/// @return 	The new list. NULL if the allocation fails.
+t_gnl	*ft_lstmap(t_gnl *lst, void *(*f)(void *), void (*del)(void *))
+{
+	t_gnl	*lsthead;
+	t_gnl	*lstnew;
+
+	if (!lst)
+		return (NULL);
+	lstnew = ft_lstnew(f((*lst).buf_read));
+	if (!lstnew)
+		return (NULL);
+	lsthead = lstnew;
+	while (lst)
+	{
+		if ((*lst).next)
+		{
+			(*lstnew).next = ft_lstnew(f((*(*lst).next).buf_read));
+			if (!(*lstnew).next)
+			{
+				ft_lstdelone(lstnew, del);
+				return (NULL);
+			}
+			lstnew = (*lstnew).next;
+		}
+		lst = (*lst).next;
+	}
+	(*lstnew).next = NULL;
+	return (lsthead);
+}
+
+/// @brief 			Allocates (with malloc(3)) and returns a new element. The
+/// The variable ’content’ is initialized with the value of the parameter 
+/// ’content’. The variable ’next’ is initialized to NULL.
+/// @param content 	The content to create the new element with.
+/// @return 		The new element.
+t_gnl	*ft_lstnew(void *content)
+{
+	t_gnl	*lstnew;
+
+	lstnew = (t_gnl *)malloc(sizeof(t_gnl));
+	if (!lstnew)
+		return (NULL);
+	else
+	{
+		(*lstnew).fd = (int)(*content);
+		(*lstnew).next = NULL;
+	}
+	return (lstnew);
+}
+
+/// @brief 		Counts the number of elements in a list.
+/// @param lst	The beginning of the list.
+/// @return		The number of elements in the list.
+int	ft_lstsize(t_gnl *lst)
+{
+	int	i;
+
+	i = 0;
+	while (lst)
+	{
+		lst = (*lst).next;
+		i++;
+	}
+	return (i);
+}
+
+void	ft_gnl(int fd)
+{
+	static t_gnl	*l;
+	
+	l = (t_gnl *)malloc(sizeof(t_gnl));
+	(*l).fd = fd;
+	(*l).buf_read = (char *)malloc(sizeof(char) * BUFFER_SIZE);
+	(*l).buf_read = ft_gnl_read(fd, (*l).buf_read);
+	(*l).next = (t_gnl *)malloc(sizeof(t_gnl));
+	(*l).next = NULL;
+	
+}
