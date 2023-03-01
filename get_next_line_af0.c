@@ -6,7 +6,7 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/01 00:38:07 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/01 01:33:43 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ int		pending_read(char *str, char **line)
 	{
 		if (tmp[i] == '\n')
 		{
-			*line = ft_strsub(str, 0, i);
+			*line = ft_strsub(str, 0, i+1);
 			str = ft_strsub(str, i + 1, ft_strlen(str));
 			free(tmp);
 			return (1);
@@ -207,11 +207,10 @@ int		get_next_line(int fd, char **line)
 	*line = NULL;
 	if (!pending_read(fd_node->str, line))
 		ret = new_read(fd, line);
-	if (ret)
-		split_read(line, fd_node);
-	if (!ret)
+	split_read(line, fd_node);
+	if (ret == 0 || ret == -1)
 	{
-		//free(fd_node->str);//?? not sure "str" exists at this stage
+		free(fd_node->str);//?? not sure "str" exists at this stage
 		fd_lst = fd_node->next;
 		free(fd_node);
 	}

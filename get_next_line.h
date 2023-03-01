@@ -6,13 +6,13 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 11:59:20 by slynn-ev          #+#    #+#             */
-/*   Updated: 2023/03/01 00:26:38 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/01 01:28:45 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
-# define BUFF_SIZE 10
+# define BUFF_SIZE 1000
 # define OPEN_MAX 1000
 # define EMPTY_LINE 2
 # define GET_NEXT_LINE 3
