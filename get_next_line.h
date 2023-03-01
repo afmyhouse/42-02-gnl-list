@@ -6,7 +6,7 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 11:59:20 by slynn-ev          #+#    #+#             */
-/*   Updated: 2023/02/27 00:02:12 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/01 00:26:38 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <stdlib.h>
 //# include "libft/libft.h"
 
-typedef struct		s_fd_buf
+/*typedef struct		s_gnl
 {
 	char		*str;
 	int			fd;
@@ -35,8 +35,24 @@ typedef struct		s_list
 	void			*content;
 	size_t			content_size;
 	struct s_list	*next;
-}					t_list;
+}					t_list;*/
 
-int					get_next_line(int fd, char **line);
+typedef struct	s_fd_lst
+{
+	int		fd;
+	char	*str;
+	struct s_fd_lst	*next;
+}				t_fd_lst;
+
+char		*ft_strchr(const char *s, int c);
+size_t		ft_strlen(const char *s);
+char		*ft_strdup(const char *s);
+char		*ft_strjoin_free(char const *s1, char const *s2);
+char		*ft_strsub(char const *s, unsigned int start, size_t len);
+t_fd_lst	*check_fd(int fd, t_fd_lst **list);
+int			split_read(char **line, t_fd_lst *gnl_buf);
+int			new_read(int fd, char **line);
+int			pending_read(char *str, char **line);
+int			get_next_line(int fd, char **line);
 
 #endif

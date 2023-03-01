@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_af0.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/02/28 22:57:14 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/01 00:38:07 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,77 +81,55 @@ char	*ft_strjoin_free(char const *s1, char const *s2)
 	return (NULL);
 }
 
-char	*ft_strsub(char const *s, unsigned int start, size_t len)
+char	*ft_strsub(char const *str, unsigned int start, size_t len)
 {
-	char			*cpy;
+	char			*sub;
 	unsigned long	i;
 
-	if (s == NULL)
+	if (str == NULL)
 		return (NULL);
 	i = 0;
-	if ((cpy = (char *)malloc(sizeof(char) * (len + 1))))//len-star+1
+	if ((sub = (char *)malloc(sizeof(char) * (len + 1))))//len-star+1
 	{
 		while (i < len)
 		{
-			cpy[i] = s[start + i];
+			sub[i] = str[start + i];
 			i++;
 		}
-		cpy[i] = '\0';
-		return (cpy);
+		sub[i] = '\0';
+		return (sub);
 	}
 	return (NULL);
 }
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-void	ft_add_fd_node(t_list **list, t_list *new)
+t_fd_lst	*check_fd(int fd, t_fd_lst **list)
 {
-	new->next = *list;
-	*list = new;
-}
+	t_fd_lst	*fd_ptr;
 
-t_list		*ft_create_fd_node(void const *content, size_t content_size)
-{
-	t_list *new_fd;
-
-	if (!(new_fd = (t_list *)malloc(sizeof(t_list))))
-		return (NULL);
-	if (content == NULL)
-		return (NULL);
-	new_fd->content = (void *)content;
-	new_fd->content_size = content_size;
-	new_fd->next = NULL;
-	return (new_fd);
-}
-
-t_gnl	*check_fd(int fd, t_list **list)
-{
-	t_gnl	*gnl_buf;
-	t_list		*new;
-
-	new = *list;
-	while (new != NULL)
+	fd_ptr = *list;
+	while (fd_ptr != NULL)
 	{
-		if (((t_gnl *)new->content)->fd == fd)
-			return ((t_gnl *)new->content);
-		new = new->next;
+		if ((fd_ptr->fd) == fd)
+			return (fd_ptr);
+		fd_ptr = fd_ptr->next;
 	}
-	if (!(gnl_buf = malloc(sizeof(t_gnl))))
+	if (!(fd_ptr = (t_fd_lst *)malloc(sizeof(t_fd_lst))))
 		return (NULL);
-	gnl_buf->str = NULL;
-	gnl_buf->fd = fd;
-	if ((new = ft_create_fd_node((void *)gnl_buf, 0)) == NULL)
-		return (NULL);
-	ft_add_fd_node(list, new);
-	return (gnl_buf);
+	fd_ptr->str = NULL;
+	fd_ptr->fd = fd;
+	fd_ptr->next = *list;
+	*list = fd_ptr;
+	return (fd_ptr);
 }
 
-void	gnl_split_read(char **line, t_gnl *gnl_buf)
+int	split_read(char **line, t_fd_lst *fd_node)
 {
 	int		i;
 	int		len;
 	char	*tmp;
 
 	if (*line == NULL)
-		return ;
+		return (0);
 	i = 0;
 	len = ft_strlen(*line);
 	tmp = *line;
@@ -159,13 +137,14 @@ void	gnl_split_read(char **line, t_gnl *gnl_buf)
 	{
 		if (tmp[i] == '\n')
 		{
-			gnl_buf->str = ft_strsub(*line, i + 1, len + 1);
+			fd_node->str = ft_strsub(*line, i + 1, len + 1);
 			*line = ft_strsub(*line, 0, i + 1);
 			free(tmp);
-			return ;
+			return (1);
 		}
 		i++;
 	}
+	return (0);
 }
 
 int		new_read(int fd, char **line)
@@ -182,41 +161,40 @@ int		new_read(int fd, char **line)
 		if (ft_strchr(buff, '\n') != NULL)
 			break ;
 	}
-	if (*line == NULL)
+	if (*line == NULL || ret == 0)
 		return (0);
 	return (1);
 }
 
-int		gnl_pending_read(char **str, char **line)
+int		pending_read(char *str, char **line)
 {
 	char	*tmp;
 	int		i;
 
 	i = 0;
-	if (*str == NULL || **str == '\0')
-		return (1);
-	tmp = *str;
+	if (str == NULL || *str == '\0')
+		return (0);
+	tmp = str;
 	while (tmp[i])
 	{
 		if (tmp[i] == '\n')
 		{
-			*line = ft_strsub(*str, 0, i);
-			*str = ft_strsub(*str, i + 1, ft_strlen(*str));
+			*line = ft_strsub(str, 0, i);
+			str = ft_strsub(str, i + 1, ft_strlen(str));
 			free(tmp);
-			return (0);
+			return (1);
 		}
 		i++;
 	}
-	*line = *str;
-	*str = NULL;
-	return (1);
+	*line = str;
+	str = NULL;
+	return (0);
 }
 
 int		get_next_line(int fd, char **line)
 {
-	static t_list	*list;
-	t_gnl			*gnl_buf;
-	//t_fd_buf		*fd_buf;
+	static t_fd_lst	*fd_lst;
+	t_fd_lst		*fd_node;
 	int				ret;
 
 	ret = 1;
@@ -224,14 +202,19 @@ int		get_next_line(int fd, char **line)
 		return (-1);
 	if (fd == -1)
 		return (-1);
-	if ((gnl_buf = check_fd(fd, &list)) == NULL)
+	if ((fd_node = check_fd(fd, &fd_lst)) == NULL)
 		return (-1);
 	*line = NULL;
-	if (gnl_pending_read(&(gnl_buf->str), line))
+	if (!pending_read(fd_node->str, line))
 		ret = new_read(fd, line);
+	if (ret)
+		split_read(line, fd_node);
 	if (!ret)
-		free(gnl_buf->str);
-	gnl_split_read(line, gnl_buf);
+	{
+		//free(fd_node->str);//?? not sure "str" exists at this stage
+		fd_lst = fd_node->next;
+		free(fd_node);
+	}
 	return (ret);
 }
 
@@ -242,8 +225,8 @@ int main(void)
 	char *line;
 	int i1 = 0, i2 = 0;
 
-	fd1 = open("file11.txt", O_RDONLY);
-	fd2 = open("file22.txt", O_RDONLY);
+	fd1 = open("file111.txt", O_RDONLY);
+	fd2 = open("file222.txt", O_RDONLY);
 
 	while (rd1 || rd2)
 	{
@@ -264,7 +247,7 @@ int main(void)
 			free(line);
 		}
 	}
-
+	//free(line);
 	close(fd1);
 	close(fd2);
 	return (0);
