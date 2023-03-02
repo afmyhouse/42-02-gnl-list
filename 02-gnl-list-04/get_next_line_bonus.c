@@ -6,7 +6,7 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/02 17:49:26 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/02 17:59:07 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,9 +166,11 @@ char		*get_next_line(int fd)
 /**/
 int	main(void)
 {
+	//int		fd, fd1, fd2;
 	int		fd, fd1, fd2, fd3;
+	//char	*line1, *line2;
 	char	*line1, *line2, *line3;
-	int 	i1 = 0;
+	int 	i = 0;
 
 	fd1 = open("./files/multiple_nlx5", O_RDONLY);
 	fd2 = open("./files/multiple_line_with_nl", O_RDONLY);
@@ -201,26 +203,10 @@ int	main(void)
 			printf("\n");
 			free(line3);
 		}
+		if (!line1 && !line2 && !line3)
+			fd = 0;
 	}
-	{
-		line1 = get_next_line(fd1);
-		if (line1)
-		{
-			printf("--------- fd = %d - linha %d ----------\n", fd1, ++i1);
-			printf("%s", line1);
-			printf("\n");
-			free(line1);
-		}
-		line2 = get_next_line(fd2);
-		if (line2)
-		{
-			printf("--------- fd = %d - linha %d ----------\n", fd2, ++i2);
-			printf("%s", line2);
-			printf("\n");
-			free(line2);
-		}
 
-	}
 	close(fd1);
 	close(fd2);
 	return (0);
