@@ -178,9 +178,9 @@ char	*split_read(t_fd_lst *fd_node, char *line)
 char	*new_read(int fd, char *line)
 {
 	int		ret;
-	char	buff[BUFF_SIZE + 1];
+	char	buff[BUFFER_SIZE + 1];
 
-	while ((ret = read(fd, buff, BUFF_SIZE)) != 0)
+	while ((ret = read(fd, buff, BUFFER_SIZE)) != 0)
 	{
 		if (ret == -1)
 			return (0);

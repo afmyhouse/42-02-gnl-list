@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_af0.c                                :+:      :+:    :+:   */
+/*   get_next_line_00.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/01 01:33:43 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/02 14:18:56 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,9 +150,9 @@ int	split_read(char **line, t_fd_lst *fd_node)
 int		new_read(int fd, char **line)
 {
 	int		ret;
-	char	buff[BUFF_SIZE + 1];
+	char	buff[BUFFER_SIZE + 1];
 
-	while ((ret = read(fd, buff, BUFF_SIZE)) != 0)
+	while ((ret = read(fd, buff, BUFFER_SIZE)) != 0)
 	{
 		if (ret == -1)
 			return (-1);

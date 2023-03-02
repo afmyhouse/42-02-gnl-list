@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line_01.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: antoda-s <antoda-s@student.42.fr>          +#+  +:+       +#+        */
+/*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/01 13:34:07 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/02 14:18:56 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,9 +159,9 @@ int	split_read(char *line, t_fd_lst *fd_node)
 char		*new_read(int fd, char *line)
 {
 	int		ret;
-	char	buff[BUFF_SIZE + 1];
+	char	buff[BUFFER_SIZE + 1];
 
-	while ((ret = read(fd, buff, BUFF_SIZE)) != 0)
+	while ((ret = read(fd, buff, BUFFER_SIZE)) != 0)
 	{
 		//if ()
 		//	return (0);
@@ -210,7 +210,7 @@ char	*get_next_line(int fd)//, char **line
 	char			*line;
 
 	ret = 1;
-	if (fd < 0 || BUFF_SIZE < 1)
+	if (fd < 0 || BUFFER_SIZE < 1)
 		return (0);
 	if ((fd_node = check_fd(fd, &fd_lst)) == NULL)
 		return (0);
@@ -247,7 +247,7 @@ int main(void)
 			printf("%s", line);
 			printf("\n");
 			if(!line)
-				rd1 = 0;			
+				rd1 = 0;
 			//free(line);
 		}
 		//rd2 = get_next_line(fd2, &line);
@@ -258,7 +258,7 @@ int main(void)
 			printf("%s", line);
 			printf("\n");
 			if(!line)
-				rd2 = 0;	
+				rd2 = 0;
 			//free(line);
 		}
 	}

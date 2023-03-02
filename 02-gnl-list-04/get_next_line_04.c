@@ -6,7 +6,7 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/02 00:32:51 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/02 15:52:04 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,49 +38,7 @@ size_t	ft_strlen(const char *s)
 		i++;
 	return (i);
 }
-/*
-char	*ft_strdup(const char *s)
-{
-	char	*dst;
-	int		i;
 
-	i = 0;
-	dst = (char *)malloc(sizeof(char) * (ft_strlen((char *)s) + 1));
-	if (!dst)
-		return (NULL);
-	while (*s)
-		dst[i++] = *s++;
-	dst[i] = '\0';
-	return (dst);
-}*/
-
-/*char	*ft_strjoin_free(char const *s1, char const *s2)
-{
-	int			len;
-	char		*dst;
-	char		*tmp;
-	int			i;
-
-	i = 0;
-	if (s2 == NULL)
-		return (NULL);
-	if (s1 == NULL)
-		return (ft_strdup(s2));
-	if (!(len = ft_strlen((char *)s1) + ft_strlen((char *)s2)))
-		return (NULL);
-	if ((dst = (char *)malloc(sizeof(char) * (len + 1))))
-	{
-		tmp = (char *)s1;
-		while (*s1)
-			dst[i++] = *s1++;
-		while (*s2)
-			dst[i++] = *s2++;
-		dst[i] = '\0';
-		free((void *)tmp);
-		return (dst);
-	}
-	return (NULL);
-}*//**/
 char	*ft_strjoin_free(char const *s1, char const *s2)
 {
 	int		len;
@@ -105,7 +63,7 @@ char	*ft_strjoin_free(char const *s1, char const *s2)
 		*dst++ = *s2++;
 	*dst = '\0';
 	return (ret);
-}/**/
+}
 
 char	*ft_strsub(char const *str, unsigned int start, size_t len)
 {
@@ -154,27 +112,28 @@ t_fd_lst	*check_fd(int fd, t_fd_lst **list)
 	}
 	if (!(ptr = (t_fd_lst *)malloc(sizeof(t_fd_lst))))
 		return (NULL);
-	ptr->next = *list;
+	// ptr->next = *list;
+	*ptr = (t_fd_lst){fd, NULL, 1, *list};
 	*list = ptr;
-	return (ptr->str = NULL, ptr->fd = fd, ptr->ret = 1, ptr);
+	return (ptr);
+	// return (ptr->str = NULL, ptr->fd = fd, ptr->ret = 1, ptr);
 }
 
-char	*new_line(int fd, char *line)
+char	*new_line(t_fd_lst *node, char *line)
 {
-	int		ret;
-	char	buff[BUFF_SIZE + 1];
+	char	buff[BUFFER_SIZE + 1];
 
-	while ((ret = read(fd, buff, BUFF_SIZE)) != 0)
+	buff[0] = '\0';
+	while (node->ret != 0 && !ft_strchr(buff, '\n'))
 	{
-		if (ret == -1)
+		node->ret = read(node->fd, buff, BUFFER_SIZE);
+		if (node->ret == -1)
 			return (0);
-		buff[ret] = '\0';
+		buff[node->ret] = '\0';
 		line = ft_strjoin_free(line, buff);
-		if (ft_strchr(buff, '\n') != NULL)
-			break ;
 	}
-	if (line == NULL || ret == 0)
-		return (0);
+	//if (line == NULL || ret == 0)///////////////
+	//	return (0);/////////////////////
 	return (line);
 }
 
@@ -184,9 +143,9 @@ char	*split_read(t_fd_lst *node, char *line)
 	int		len;
 	char	*tmp;
 
-	if (line == NULL)
-		return (0);
-	i = 0;
+	if (line)
+	{
+		i = 0;
 	len = ft_strlen(line);
 	tmp = line;
 	while (tmp[i])
@@ -200,8 +159,11 @@ char	*split_read(t_fd_lst *node, char *line)
 		}
 		i++;
 	}
+	}
 	node->str = NULL;
 	node->ret = 0;
+	if (*line == '\0')
+		line = NULL;
 	return (line);
 }
 
@@ -245,7 +207,7 @@ char		*get_next_line(int fd)
 	line = pending_line(node, line);
 	if (node->str == NULL || *node->str == '\0')
 	{
-		line = new_line(fd, line);
+		line = new_line(node, line);
 		line = split_read(node, line);
 	}
 	if ((node->ret == 0 || node->ret == -1) && node->str == NULL)
