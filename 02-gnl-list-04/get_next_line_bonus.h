@@ -6,14 +6,14 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/06 11:59:20 by slynn-ev          #+#    #+#             */
-/*   Updated: 2023/03/02 17:43:22 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/02 15:41:06 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 10000000
+#  define BUFFER_SIZE 11
 # endif
 
 # include <unistd.h>

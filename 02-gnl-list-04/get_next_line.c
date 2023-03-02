@@ -6,266 +6,198 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/02 14:18:56 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/02 17:04:57 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
-char	*ft_strchr(const char *s, int c)
+t_fd_lst	*check_fd(int fd, t_fd_lst **list)
 {
-	char	*str;
+	t_fd_lst	*ptr;
+	t_fd_lst	*tmp;
 
-	str = (char *)s;
-	while (*str)
+	ptr = *list;
+	tmp = *list;
+	while (ptr != NULL)
 	{
-		if (*str == c)
-			return (str);
-		str++;
-	}
-	if (*str == c)
-		return (str);
-	return (NULL);
-}
-
-size_t	ft_strlen(const char *s)
-{
-	int	i;
-
-	i = 0;
-	while (s[i])
-		i++;
-	return (i);
-}
-
-char	*ft_strdup(const char *s)
-{
-	char	*dst;
-	int		i;
-
-	i = 0;
-	if (!(dst = (char *)malloc(sizeof(char) * (ft_strlen((char *)s) + 1))))
-		return (NULL);
-	while (*s)
-		dst[i++] = *s++;
-	dst[i] = '\0';
-	return (dst);
-}
-
-char	*ft_strjoin_free(char const *s1, char const *s2)
-{
-	int			len;
-	char		*dst;
-	char		*tmp;
-	int			i;
-
-	i = 0;
-	if (s2 == NULL)
-		return (NULL);
-	if (s1 == NULL)
-		return (ft_strdup(s2));
-	if (!(len = ft_strlen((char *)s1) + ft_strlen((char *)s2)))
-		return (NULL);
-	if ((dst = (char *)malloc(sizeof(char) * (len + 1))))
-	{
-		tmp = (char *)s1;
-		while (*s1)
-			dst[i++] = *s1++;
-		while (*s2)
-			dst[i++] = *s2++;
-		dst[i] = '\0';
-		free((void *)tmp);
-		return (dst);
-	}
-	return (NULL);
-}
-
-char	*ft_strsub(char const *s, unsigned int start, size_t len)
-{
-	char			*cpy;
-	unsigned long	i;
-
-	if (s == NULL)
-		return (NULL);
-	i = 0;
-	if ((cpy = (char *)malloc(sizeof(char) * (len + 1))))//len-star+1
-	{
-		while (i < len)
+		if ((ptr->fd) == fd)
 		{
-			cpy[i] = s[start + i];
-			i++;
+			if (ptr != tmp)
+			{
+				tmp->next = ptr->next;
+				ptr->next = *list;
+				*list = ptr;
+			}
+			return (ptr);
 		}
-		cpy[i] = '\0';
-		return (cpy);
+		tmp = ptr;
+		ptr = ptr->next;
 	}
-	return (NULL);
-}
-/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
-void	ft_add_fd_node(t_list **list, t_list *new)
-{
-	new->next = *list;
-	*list = new;
-}
-
-t_list		*ft_create_fd_node(void const *content, size_t content_size)
-{
-	t_list *new_fd;
-
-	if (!(new_fd = (t_list *)malloc(sizeof(t_list))))
+	if (!(ptr = (t_fd_lst *)malloc(sizeof(t_fd_lst))))
 		return (NULL);
-	if (content == NULL)
-		return (NULL);
-	new_fd->content = (void *)content;
-	new_fd->content_size = content_size;
-	new_fd->next = NULL;
-	return (new_fd);
+	*ptr = (t_fd_lst){fd, NULL, 1, *list};
+	*list = ptr;
+	return (ptr);
 }
 
-t_gnl	*check_fd(int fd, t_list **list)
+char	*new_line(t_fd_lst *node, char *line)
 {
-	t_gnl	*gnl_buf;
-	t_list		*new;
+	char	*buff;
 
-	new = *list;
-	while (new != NULL)
+	buff = (char *)malloc(BUFFER_SIZE + 1);
+	buff[0] = '\0';
+	while (node->ret != 0 && !ft_strchr(buff, '\n'))
 	{
-		if (((t_gnl *)new->content)->fd == fd)
-			return ((t_gnl *)new->content);
-		new = new->next;
+		node->ret = read(node->fd, buff, BUFFER_SIZE);
+		if (node->ret == -1)
+		{
+			free(buff);
+			return (0);
+		}
+		buff[node->ret] = '\0';
+		line = ft_strjoin_free(line, buff);
 	}
-	if (!(gnl_buf = malloc(sizeof(t_gnl))))
-		return (NULL);
-	gnl_buf->str = NULL;
-	gnl_buf->fd = fd;
-	if ((new = ft_create_fd_node((void *)gnl_buf, 0)) == NULL)
-		return (NULL);
-	ft_add_fd_node(list, new);
-	return (gnl_buf);
+	free(buff);
+	return (line);
 }
 
-void	gnl_split_read(char **line, t_gnl *gnl_buf)
+char	*split_read(t_fd_lst *node, char *line)
 {
 	int		i;
 	int		len;
 	char	*tmp;
 
-	if (*line == NULL)
-		return ;
-	i = 0;
-	len = ft_strlen(*line);
-	tmp = *line;
-	while (tmp[i])
+	if (line)
 	{
-		if (tmp[i] == '\n')
+		i = 0;
+		len = ft_strlen(line);
+		tmp = line;
+		while (tmp[i])
 		{
-			gnl_buf->str = ft_strsub(*line, i + 1, len + 1);
-			*line = ft_strsub(*line, 0, i + 1);
-			free(tmp);
-			return ;
+			if (tmp[i] == '\n')
+			{
+				node->str = ft_strsub(line, i + 1, len - i);
+				line = ft_strsub(line, 0, i + 1);
+				if (*node->str  == '\0')
+				{
+					free(node->str );
+					node->str  = NULL;
+				}
+				free(tmp);
+				return (line);
+			}
+			i++;
 		}
-		i++;
 	}
-}
-
-int		new_read(int fd, char **line)
-{
-	int		ret;
-	char	buff[BUFFER_SIZE + 1];
-
-	while ((ret = read(fd, buff, BUFFER_SIZE)) != 0)
+	node->str = NULL;
+	node->ret = 0;
+	if (*line == '\0')
 	{
-		if (ret == -1)
-			return (-1);
-		buff[ret] = '\0';
-		*line = ft_strjoin_free(*line, buff);
-		if (ft_strchr(buff, '\n') != NULL)
-			break ;
+		free(line);
+		line = NULL;
 	}
-	if (*line == NULL)
-		return (0);
-	return (1);
+	return (line);
 }
 
-int		gnl_pending_read(char **str, char **line)
+char	*pending_line(t_fd_lst *node, char *line)
 {
 	char	*tmp;
 	int		i;
 
 	i = 0;
-	if (*str == NULL || **str == '\0')
-		return (1);
-	tmp = *str;
+	if (node->str == NULL || *node->str == '\0')
+		return (0);
+	tmp = node->str;
 	while (tmp[i])
 	{
 		if (tmp[i] == '\n')
 		{
-			*line = ft_strsub(*str, 0, i);
-			*str = ft_strsub(*str, i + 1, ft_strlen(*str));
+			line = ft_strsub(node->str, 0, i + 1);//******
+			node->str = ft_strsub(node->str, i + 1, ft_strlen(node->str));
+			if (*node->str == '\0')
+			{
+				free(node->str);
+				node->str = NULL;
+			}
 			free(tmp);
-			return (0);
+			return (line);
 		}
 		i++;
 	}
-	*line = *str;
-	*str = NULL;
-	return (1);
+	line = node->str;
+	node->str = NULL;
+	return (line);
 }
 
-int		get_next_line(int fd, char **line)
+char		*get_next_line(int fd)
 {
-	static t_list	*list;
-	t_gnl			*gnl_buf;
-	//t_fd_buf		*fd_buf;
-	int				ret;
+	static t_fd_lst	*fd_lst;
+	t_fd_lst		*node;
+	char			*line;
 
-	ret = 1;
-	if (line == NULL)
-		return (-1);
-	if (fd == -1)
-		return (-1);
-	if ((gnl_buf = check_fd(fd, &list)) == NULL)
-		return (-1);
-	*line = NULL;
-	if (gnl_pending_read(&(gnl_buf->str), line))
-		ret = new_read(fd, line);
-	if (!ret)
-		free(gnl_buf->str);
-	gnl_split_read(line, gnl_buf);
-	return (ret);
-}
-
-int main(void)
-{
-	int fd1, fd2;
-	int rd1 = 1, rd2 = 1;
-	char *line;
-	int i1 = 0, i2 = 0;
-
-	fd1 = open("file11.txt", O_RDONLY);
-	fd2 = open("file22.txt", O_RDONLY);
-
-	while (rd1 || rd2)
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	node = check_fd(fd, &fd_lst);
+	if (node == NULL)
+		return (NULL);
+	line = NULL;
+	line = pending_line(node, line);
+	if (node->str == NULL || *node->str == '\0')
 	{
-		rd1 = get_next_line(fd1, &line);
-		if (rd1 > 0)
-		{
-			printf("--------- fd = %d - linha %d ----------\n", fd1, ++i1);
-			printf("%s", line);
-			printf("\n");
-			free(line);
-		}
-		rd2 = get_next_line(fd2, &line);
-		if (rd2 > 0)
-		{
-			printf("--------- fd = %d - linha %d ----------\n", fd2, ++i2);
-			printf("%s", line);
-			printf("\n");
-			free(line);
-		}
+		line = new_line(node, line);
+		if(line)
+			line = split_read(node, line);
 	}
 
+	if ((node->ret == 0 || node->ret == -1) && node->str == NULL )
+	{
+		fd_lst = node->next;
+		free(node);
+	}
+	/*if (*node->str == '\0' && node)
+	{
+		free(node->str);
+		node->str = NULL;
+	}*/
+	return (line);
+}
+/*
+int	main(void)
+{
+	int		fd1, fd2;
+	char	*line1;
+	char	*line2;
+	int 	i1 = 0, i2 = 0;
+
+	fd1 = open("file3.txt", O_RDONLY);
+	fd2 = open("file3.txt", O_RDONLY);
+		line1 = get_next_line(fd1);
+		line2 = get_next_line(fd2);
+
+	while (line1 || line2)
+	{
+		if (line1)
+		{
+			printf("--------- fd = %d - linha %d ----------\n", fd1, ++i1);
+			printf("%s", line1);
+			printf("\n");
+			free(line1);
+		}
+		if (line2)
+		{
+			printf("--------- fd = %d - linha %d ----------\n", fd2, ++i2);
+			printf("%s", line2);
+			printf("\n");
+			free(line2);
+		}
+		line1 = get_next_line(fd1);
+		line2 = get_next_line(fd2);
+
+	}
 	close(fd1);
 	close(fd2);
 	return (0);
 }
+*/
