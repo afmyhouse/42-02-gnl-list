@@ -1,0 +1,45 @@
+NAME = main
+
+CC = cc
+
+CFLAGS = -Wall -Wextra -Werror -g
+
+LIB = ./include/get_next_line.h
+
+RM = rm -rf
+
+SRCS_M = ./src/get_next_line.c \
+		./src/get_next_line_utils.c \
+		./src/get_next_line_main.c
+
+SRCS_B = ./src/get_next_line_bonus.c \
+		./src/get_next_line_utils_bonus.c \
+		./src/get_next_line_main.c
+
+OBJS_M = $(SRCS_M:.c=.o)
+
+OBJS_B = $(SRCS_B:.c=.o)
+
+BIN_B	:= bin_b
+SRC_B	:= src_b
+INC_B	:= inc_b
+
+BIN_M	:= bin_m
+SRC_M	:= src_m
+INC_M	:= inc_m
+
+all: $(BIN_M)/$(NAME)
+
+run: clean all
+    clear
+    ./$(BIN_M)/$(NAME)
+
+$(BIN_M)/$(NAME): $(SRC_M)/*.c $(INC_M)/*.h
+	$(CC) $(CFLAGS) -I$(INC_M) $^ -o $@
+
+clean:
+    -rm $(BIN_M)/*
+
+re: fclean all
+
+.PHONY: all clean fclean re bonus
