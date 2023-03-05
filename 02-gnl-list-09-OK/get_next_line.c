@@ -6,7 +6,7 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/05 18:53:31 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/05 19:48:47 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,16 +68,14 @@ int	new_line(t_fd_lst *node)
 
 int	next_line(t_fd_lst *node)
 {
-	int		len;
 	int		i;
 	char	*tmp;
-	
+
 	i = 0;
 	if (!ft_strchr(node->raw, '\n') && node->ret)
 		new_line(node);
 	if (node->raw && *node->raw)
 	{
-		len = ft_strlen(node->raw);
 		tmp = node->raw;
 		while (node->raw[i] && node->raw[i] != '\n')
 			i++;
@@ -85,7 +83,7 @@ int	next_line(t_fd_lst *node)
 		{
 			i++;
 			node->nl = ft_strsub(node->raw, 0, i);
-			node->raw = ft_strsub(node->raw, i, len - i);
+			node->raw = ft_strsub(node->raw, i, ft_strlen(node->raw) - i);
 			if (!*node->raw)
 				ft_free(&node->raw);
 			free(tmp);
@@ -94,44 +92,14 @@ int	next_line(t_fd_lst *node)
 		node->nl = node->raw;
 	}
 	node->raw = NULL;
-	node->ret = 0;
-	return (0);
+	return (node->ret = 0, 0);
 }
-/*
-int	next_line(t_fd_lst *node)
-{
-	int		len;
-	int		i;
-
-	i = 0;
-	if (!ft_strchr(node->raw, '\n') && node->ret)
-		new_line(node);
-	if (node->raw && *node->raw)
-	{
-		len = ft_strlen(node->raw);
-		while (node->raw[i] && node->raw[i] != '\n')
-			i++;
-		if (node->raw[i] == '\n')
-		{
-			i++;
-			node->nl = ft_strsub(node->raw, 0, i);
-			node->raw = ft_strsub(node->raw, i, len - i);
-			if (!*node->raw)
-				ft_free(&node->raw);
-			return (1);
-		}
-		node->nl = node->raw;
-	}
-	node->raw = NULL;
-	node->ret = 0;
-	return (0);
-}*/
 
 char	*get_next_line(int fd)
 {
 	static t_fd_lst	*fd_lst;
 	t_fd_lst		*node;
-	char 			*line;
+	char			*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
@@ -145,5 +113,5 @@ char	*get_next_line(int fd)
 		fd_lst = node->next;
 		free(node);
 	}
-	return (node->nl);
+	return (line);
 }

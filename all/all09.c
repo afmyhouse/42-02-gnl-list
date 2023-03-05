@@ -1,16 +1,103 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
+/*   all09.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/05 19:47:11 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/05 19:37:42 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "all09.h"
+
+void	ft_free(char **str)
+{
+	if (*str)
+	{
+		free(*str);
+		*str = NULL;
+	}
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	char	*str;
+
+	if (!s || !*s)
+		return (NULL);
+	str = (char *)s;
+	while (*str)
+	{
+		if (*str == c)
+			return (str);
+		str++;
+	}
+	if (*str == c)
+		return (str);
+	return (NULL);
+}
+
+size_t	ft_strlen(const char *s)
+{
+	int	i;
+
+	i = 0;
+	while (s[i])
+		i++;
+	return (i);
+}
+
+char	*ft_strjoin_free(char const *s1, char const *s2)
+{
+	int		len;
+	char	*dst;
+	char	*ret;
+
+	if (!s1 || !*s1)
+		len = ft_strlen(s2);
+	else
+		len = ft_strlen(s1) + ft_strlen(s2);
+	dst = (char *)malloc(sizeof(char) * (len + 1));
+	if (!dst)
+		return (NULL);
+	ret = dst;
+	if (s1)
+	{
+		while (*s1)
+			*dst++ = *s1++;
+		free((void *)(s1 - (dst - ret)));
+	}
+	while (*s2)
+		*dst++ = *s2++;
+	*dst = '\0';
+	//ft_strlen(ret);
+	return (ret);
+}
+
+char	*ft_strsub(char const *str, unsigned int start, size_t len)
+{
+	char			*sub;
+	unsigned long	i;
+
+	if (!str)
+		return (NULL);
+	i = 0;
+	sub = (char *)malloc(sizeof(char) * (len + 1));
+	if (sub)
+	{
+
+		while (i < len && str[start + i] != '\0')
+		{
+			sub[i] = str[start + i];
+			i++;
+		}
+		sub[i] = '\0';
+		return (sub);
+	}
+	return (NULL);
+}
 
 t_fd_lst	*check_fd(int fd, t_fd_lst **list)
 {
@@ -68,14 +155,17 @@ int	new_line(t_fd_lst *node)
 
 int	next_line(t_fd_lst *node)
 {
+	int		len;
 	int		i;
 	char	*tmp;
 
 	i = 0;
 	if (!ft_strchr(node->raw, '\n') && node->ret)
 		new_line(node);
+	printf("BREAK NEXT LINE 01\n");
 	if (node->raw && *node->raw)
 	{
+		len = ft_strlen(node->raw);
 		tmp = node->raw;
 		while (node->raw[i] && node->raw[i] != '\n')
 			i++;
@@ -83,7 +173,7 @@ int	next_line(t_fd_lst *node)
 		{
 			i++;
 			node->nl = ft_strsub(node->raw, 0, i);
-			node->raw = ft_strsub(node->raw, i, ft_strlen(node->raw) - i);
+			node->raw = ft_strsub(node->raw, i, len - i);
 			if (!*node->raw)
 				ft_free(&node->raw);
 			free(tmp);
@@ -92,26 +182,38 @@ int	next_line(t_fd_lst *node)
 		node->nl = node->raw;
 	}
 	node->raw = NULL;
-	return (node->ret = 0, 0);
+	node->ret = 0;
+	return (0);
 }
 
 char	*get_next_line(int fd)
 {
 	static t_fd_lst	*fd_lst;
 	t_fd_lst		*node;
-	char			*line;
+	char 			*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	node = check_fd(fd, &fd_lst);
+		printf("BREAK GET NEXT LINE 01\n");
 	if (node == NULL)
 		return (NULL);
+	printf("BREAK GET NEXT LINE 02\n");
 	next_line(node);
+	printf("BREAK GET NEXT LINE 03\n");
 	line = node->nl;
 	if ((node->ret == 0 || node->ret == -1) && (!node->nl || !*node->nl))
 	{
+		printf("BREAK GET NEXT LINE 04\n");
 		fd_lst = node->next;
-		free(node);
+		printf("BREAK GET NEXT LINE 05\n");
+		//if (node)
+			free(node);
+		printf("BREAK GET NEXT LINE 06\n");
 	}
-	return (line);
+		printf("BREAK GET NEXT LINE 07\n");
+	//if (node)
+		return (line);
+	//else
+	//	return (NULL);
 }

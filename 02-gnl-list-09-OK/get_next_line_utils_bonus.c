@@ -6,7 +6,7 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/05 18:54:29 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/05 19:44:18 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ size_t	ft_strlen(const char *s)
 	while (s[i])
 		i++;
 	return (i);
-} 
+}
 
 char	*ft_strjoin_free(char const *s1, char const *s2)
 {
@@ -72,7 +72,6 @@ char	*ft_strjoin_free(char const *s1, char const *s2)
 	while (*s2)
 		*dst++ = *s2++;
 	*dst = '\0';
-	//ft_strlen(ret);
 	return (ret);
 }
 
@@ -87,7 +86,6 @@ char	*ft_strsub(char const *str, unsigned int start, size_t len)
 	sub = (char *)malloc(sizeof(char) * (len + 1));
 	if (sub)
 	{
-
 		while (i < len && str[start + i] != '\0')
 		{
 			sub[i] = str[start + i];
