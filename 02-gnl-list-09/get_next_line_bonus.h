@@ -1,25 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   all.h                                              :+:      :+:    :+:   */
+/*   get_next_line_bonus.h                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 00:52:19 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/05 17:50:07 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/05 18:54:07 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ALL_H
-# define ALL_H
+#ifndef GET_NEXT_LINE_BONUS_H
+# define GET_NEXT_LINE_BONUS_H
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 100000000
-# endif
-# ifndef FILE_3
-#  define FILE_3 "./files/multiple_nlx5"
-#  define FILE_4 "./files/multiple_line_no_nl"
-#  define FILE_5 "./files/alternate_line_nl_with_nl"
-#  define FILE_6 "./files/alternate_line_nl_no_nl"
 # endif
 
 # include <unistd.h>

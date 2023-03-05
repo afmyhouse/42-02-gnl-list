@@ -6,11 +6,11 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/05 17:43:46 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/05 18:53:42 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "all.h"
+#include "get_next_line.h"
 
 void	ft_free(char **str)
 {

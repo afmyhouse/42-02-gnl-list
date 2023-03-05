@@ -6,11 +6,11 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/05 18:41:01 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/05 18:53:31 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "all.h"
+#include "get_next_line.h"
 
 t_fd_lst	*check_fd(int fd, t_fd_lst **list)
 {

@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line_utils_bonus.c                        :+:      :+:    :+:   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/04 19:39:45 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/05 17:43:46 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line_bonus.h"
+#include "all.h"
 
 void	ft_free(char **str)
 {
@@ -25,6 +25,8 @@ char	*ft_strchr(const char *s, int c)
 {
 	char	*str;
 
+	if (!s || !*s)
+		return (NULL);
 	str = (char *)s;
 	while (*str)
 	{
@@ -45,7 +47,7 @@ size_t	ft_strlen(const char *s)
 	while (s[i])
 		i++;
 	return (i);
-}
+} 
 
 char	*ft_strjoin_free(char const *s1, char const *s2)
 {
@@ -58,9 +60,9 @@ char	*ft_strjoin_free(char const *s1, char const *s2)
 	else
 		len = ft_strlen(s1) + ft_strlen(s2);
 	dst = (char *)malloc(sizeof(char) * (len + 1));
-	ret = dst;
 	if (!dst)
 		return (NULL);
+	ret = dst;
 	if (s1)
 	{
 		while (*s1)
@@ -70,6 +72,7 @@ char	*ft_strjoin_free(char const *s1, char const *s2)
 	while (*s2)
 		*dst++ = *s2++;
 	*dst = '\0';
+	//ft_strlen(ret);
 	return (ret);
 }
 
@@ -84,7 +87,8 @@ char	*ft_strsub(char const *str, unsigned int start, size_t len)
 	sub = (char *)malloc(sizeof(char) * (len + 1));
 	if (sub)
 	{
-		while (i < len)// && str[start + i])
+
+		while (i < len && str[start + i] != '\0')
 		{
 			sub[i] = str[start + i];
 			i++;
