@@ -6,7 +6,7 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/05 00:52:19 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/05 17:38:21 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/06 15:48:39 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,13 @@ typedef struct s_fd_lst
 	struct s_fd_lst	*next;
 }				t_fd_lst;
 
+/* get_next_line_utils.c */
 void		ft_free(char **str);
 char		*ft_strchr(const char *s, int c);
 size_t		ft_strlen(const char *s);
 char		*ft_strjoin_free(char const *s1, char const *s2);
 char		*ft_strsub(char const *s, unsigned int start, size_t len);
+/* get_next_line.c */
 t_fd_lst	*check_fd(int fd, t_fd_lst **list);
 int			new_line(t_fd_lst *node);
 int			next_line(t_fd_lst *node);

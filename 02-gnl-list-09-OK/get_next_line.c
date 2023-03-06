@@ -6,12 +6,16 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/05 19:48:47 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/06 14:30:01 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
+/// @brief 		Checks if the fd is already in the list
+/// @param fd	Current File Descriptor
+/// @param list	Pointer to the head of the list
+/// @return		Pointer to the node, new or existing
 t_fd_lst	*check_fd(int fd, t_fd_lst **list)
 {
 	t_fd_lst	*ptr;
@@ -41,6 +45,12 @@ t_fd_lst	*check_fd(int fd, t_fd_lst **list)
 	return (*list = ptr, ptr);
 }
 
+/// @brief 		Reads the file in slashes of BUFFER_SIZE until it finds a \n
+///				or the EOF. It saves the reading at the pointer node->raw.
+///				It frees the memory allocated to the reading buffer.
+/// @param node	The node with "fd" file descriptor, pointer "raw" to hold
+///				reading result and status of reading "ret"
+/// @return		1 if it finds a new line, 0 if it reaches the end of the file
 int	new_line(t_fd_lst *node)
 {
 	char	*buff;
@@ -66,6 +76,11 @@ int	new_line(t_fd_lst *node)
 	return (1);
 }
 
+/// @brief 		Checks if there is a complete line (\n) in the raw string.
+///				If no \n is not found it calls for a "new line" from file
+///				If a complete line is found it copies it to the node->nl
+/// @param node	Pointer to the node with fd, pointers "raw" and "nl" and "ret"
+/// @return		1 if it finds a new line, 0 if it reaches the end of the file
 int	next_line(t_fd_lst *node)
 {
 	int		i;
@@ -95,22 +110,28 @@ int	next_line(t_fd_lst *node)
 	return (node->ret = 0, 0);
 }
 
+/// @brief 		Allocs & returns a string ending w/ a \n, read from a file fd
+///				Each fd should be managed independently of the others
+///				- when reading from stdin, the function will keep on reading
+///				from the current position even after have read the \n
+/// @param fd	File Descriptor
+/// @return		The string read from the file descriptor
 char	*get_next_line(int fd)
 {
-	static t_fd_lst	*fd_lst;
+	static t_fd_lst	*list;
 	t_fd_lst		*node;
 	char			*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
-	node = check_fd(fd, &fd_lst);
+	node = check_fd(fd, &list);
 	if (node == NULL)
 		return (NULL);
 	next_line(node);
 	line = node->nl;
 	if ((node->ret == 0 || node->ret == -1) && (!node->nl || !*node->nl))
 	{
-		fd_lst = node->next;
+		list = node->next;
 		free(node);
 	}
 	return (line);

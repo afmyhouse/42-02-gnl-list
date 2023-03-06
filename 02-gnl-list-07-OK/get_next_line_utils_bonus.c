@@ -6,7 +6,7 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/04 19:39:45 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/06 15:40:27 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ char	*ft_strsub(char const *str, unsigned int start, size_t len)
 	sub = (char *)malloc(sizeof(char) * (len + 1));
 	if (sub)
 	{
-		while (i < len)// && str[start + i])
+		while (i < len && str[start + i])
 		{
 			sub[i] = str[start + i];
 			i++;

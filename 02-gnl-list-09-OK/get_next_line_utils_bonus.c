@@ -6,12 +6,14 @@
 /*   By: antoda-s <antoda-s@student.42porto.com>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/27 04:12:07 by antoda-s          #+#    #+#             */
-/*   Updated: 2023/03/05 19:44:18 by antoda-s         ###   ########.fr       */
+/*   Updated: 2023/03/06 13:51:06 by antoda-s         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
+/// @brief 		Free allocated memory of a string and inicialize pointer to NULL
+/// @param str	Pointer to string
 void	ft_free(char **str)
 {
 	if (*str)
@@ -21,6 +23,10 @@ void	ft_free(char **str)
 	}
 }
 
+/// @brief 		Search for a character in a string
+/// @param s	String to search
+/// @param c	Character to search
+/// @return		Pointer to the first occurence of the character in the string
 char	*ft_strchr(const char *s, int c)
 {
 	char	*str;
@@ -39,6 +45,9 @@ char	*ft_strchr(const char *s, int c)
 	return (NULL);
 }
 
+/// @brief		Count the length of a string
+/// @param s	String to count
+/// @return		Length of the string
 size_t	ft_strlen(const char *s)
 {
 	int	i;
@@ -49,6 +58,10 @@ size_t	ft_strlen(const char *s)
 	return (i);
 }
 
+/// @brief 		Join two strings and frees allocated memory of the first string
+/// @param s1	String 1
+/// @param s2	String 2
+/// @return		Pointer to the new string
 char	*ft_strjoin_free(char const *s1, char const *s2)
 {
 	int		len;
@@ -75,6 +88,15 @@ char	*ft_strjoin_free(char const *s1, char const *s2)
 	return (ret);
 }
 
+/// @brief 			Allocates and returns a “fresh” substring from the string
+///					given as argument. The substring begins at index start and
+///					is of size len. If start and len aren’t valid index of "str"
+///					the behavior is undefined, Invalid Read Error might happen
+///					If the allocating "fresh" fails, the function returns NULL.
+/// @param str		String to be cut
+/// @param start	Starting index of the substring
+/// @param len		Length of the substring
+/// @return			Pointer to the substring
 char	*ft_strsub(char const *str, unsigned int start, size_t len)
 {
 	char			*sub;
